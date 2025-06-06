@@ -80,7 +80,7 @@ k get nodes
 
 ![](/assets/node.png)
 
-> _Make sure node all running
+>Make sure node all running
 
 ```
 k get pods -n kube-system
@@ -88,7 +88,7 @@ k get pods -n kube-system
 
 ![](/assets/pod-kube-system.png)
 
-> _Make sure pod all runing
+>Make sure pod all runing
 
 ## Deploy simple deployment for test 
 
@@ -106,7 +106,7 @@ k get pods
 
 ![](/assets/pod-kube-system.png)
 
-> _Make sure pod all runing
+>Make sure pod all runing
 
 ## Sanity for deployment
 
@@ -125,3 +125,10 @@ curl 10.103.131.59
 
 Make sure the output its oke
 ![](/assets/tescurlsvc.png)
+
+
+## Destroy cluster
+Run ansible destroy.yml to destroy cluster
+```
+ansible-playbook -i inventory.yml destroy.yml
+```
