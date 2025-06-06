@@ -1,4 +1,4 @@
-- name: Setup Kubernetes Cluster
+- name: Prepare dependency repository for Kubernetes & Docker
   hosts: k8s_cluster
   become: yes
   vars_files:
@@ -55,7 +55,7 @@
         - br_netfilter
       ignore_errors: yes
 
-    - name: Setup network kubernetes.conf
+    - name: Setup network for Kubernetes
       copy:
         dest: /etc/sysctl.d/kubernetes.conf
         content: |
@@ -87,7 +87,7 @@
       when: not kubeadm_init_stat.stat.exists
       register: kubeadm_init_output
 
-    - name: Set join token and discovery token hash facts
+    - name: Set join token for worker
       set_fact:
         join_token: "{{ kubeadm_init_output.stdout | regex_findall('--token\\s+([a-z0-9.]+)') | first }}"
         token_ca_cert_hash: "{{ kubeadm_init_output.stdout | regex_findall('--discovery-token-ca-cert-hash\\s+(sha256:[a-f0-9]+)') | first }}"
