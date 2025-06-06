@@ -1,0 +1,59 @@
+- name: create openssl
+  hosts: nginx-main
+  become: yes
+  tasks:
+    - name: create ssl self signed
+      shell: |
+        mkdir -p /etc/nginx/ssl && \
+        openssl req -x509 -nodes -days 365 \
+          -newkey rsa:2048 \
+          -keyout /etc/nginx/ssl/selfsigned.key \
+          -out /etc/nginx/ssl/selfsigned.crt \
+          -subj "/C=ID/ST=Jakarta/L=Jakarta/O=Localhost/CN=localhost"
+
+- name: install nginx
+  hosts: nginx
+  become: yes
+  tasks:
+    - name: install nginx
+      apt:
+        name: nginx
+        state: present
+
+- name: Setup nginx.conf
+  hosts: nginx-main
+  become: yes
+  tasks:
+    - name: setup nginx.conf
+      copy:
+        src: ./nginx_selfsigned
+        dest: /etc/nginx/sites-available/nginx_selfsigned
+
+    - name: create symlink nginx_selfsigned
+      file:
+        src: /etc/nginx/sites-available/nginx_selfsigned
+        dest: /etc/nginx/sites-enabled/nginx_selfsigned
+        state: link
+
+    - name: validasi config nginx
+      command: nginx -t
+      register: nginx_test_result
+
+    - name: result config validasi
+      debug:
+        msg: "{{ nginx_test_result.stdout_lines }}"
+
+    - name: restart nginx
+      command: systemctl reload nginx
+
+- name: Setup landing page
+  hosts: nginx
+  become: yes
+  tasks:
+    - name: Create landing page HTML
+      copy:
+        content: "Welcome this from {{ ansible_host }}"
+        dest: /var/www/html/index.html
+        owner: www-data
+        group: www-data
+        mode: '0644'

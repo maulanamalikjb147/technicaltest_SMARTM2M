@@ -1,0 +1,139 @@
+- name: Setup Kubernetes Cluster
+  hosts: k8s_cluster
+  become: yes
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Install apt-transport-https, ca-certificates, curl, gpg
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gpg
+        state: present
+
+    - name: Add Kubernetes GPG key
+      apt_key:
+        url: https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key
+        state: present
+        keyring: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+    - name: Add Kubernetes repository
+      apt_repository:
+        repo: 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /'
+        state: present
+        filename: kubernetes
+
+    - name: Update apt repository
+      apt:
+        update_cache: yes
+
+    - name: Install containerd
+      apt:
+        name: containerd
+        state: present
+
+    - name: Install Kubernetes components
+      apt:
+        name:
+          - kubelet
+          - kubeadm
+          - kubectl
+        state: present
+
+    - name: Mark hold service kube
+      command: apt-mark hold kubelet kubeadm kubectl
+      args:
+        creates: /etc/apt/preferences.d/kubernetes
+
+    - name: Setup Load overlay and br_netfilter modules
+      modprobe:
+        name: "{{ item }}"
+      loop:
+        - overlay
+        - br_netfilter
+      ignore_errors: yes
+
+    - name: Setup network kubernetes.conf
+      copy:
+        dest: /etc/sysctl.d/kubernetes.conf
+        content: |
+          net.bridge.bridge-nf-call-ip6tables = 1
+          net.bridge.bridge-nf-call-iptables = 1
+          net.ipv4.ip_forward = 1
+      notify: Apply sysctl settings
+
+  handlers:
+    - name: Apply sysctl settings
+      sysctl:
+        reload: yes
+      ignore_errors: yes
+      failed_when: false
+
+- name: Bootstrap Kubernetes Master Node
+  hosts: masters
+  become: yes
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Check if kubeadm init has already been run
+      stat:
+        path: /etc/kubernetes/admin.conf
+      register: kubeadm_init_stat
+
+    - name: Initialize Kubernetes Master Node if not initialized
+      command: kubeadm init --control-plane-endpoint="{{ endpoint_kube }}:{{ port_kube }}" --upload-certs
+      when: not kubeadm_init_stat.stat.exists
+      register: kubeadm_init_output
+
+    - name: Set join token and discovery token hash facts
+      set_fact:
+        join_token: "{{ kubeadm_init_output.stdout | regex_findall('--token\\s+([a-z0-9.]+)') | first }}"
+        token_ca_cert_hash: "{{ kubeadm_init_output.stdout | regex_findall('--discovery-token-ca-cert-hash\\s+(sha256:[a-f0-9]+)') | first }}"
+      when: kubeadm_init_output is defined and kubeadm_init_output.stdout is defined
+
+    - name: Setup kubeconfig for master node
+      file:
+        path: "{{ ansible_env.HOME }}/.kube"
+        state: directory
+        mode: '0755'
+
+    - name: Copy admin.conf to .kube/config
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: "{{ ansible_env.HOME }}/.kube/config"
+        mode: '0600'
+
+    - name: Change ownership of kubeconfig
+      file:
+        path: "{{ ansible_env.HOME }}/.kube/config"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+
+- name: Join Worker Nodes to Kubernetes Cluster
+  hosts: workers
+  become: yes
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Check if worker node has joined the cluster
+      stat:
+        path: /etc/kubernetes/kubelet.conf
+      register: worker_join_stat
+
+    - name: Join the worker node to the Kubernetes cluster if not joined
+      command: >
+        kubeadm join {{ endpoint_kube }}:{{ port_kube }}
+        --token {{ hostvars[groups['masters'][0]].join_token }}
+        --discovery-token-ca-cert-hash {{ hostvars[groups['masters'][0]].token_ca_cert_hash }}
+      when: not worker_join_stat.stat.exists
+
+- name: Install Calico CNI
+  hosts: masters
+  become: yes
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Download and apply Calico manifest
+      command: kubectl apply -f "{{ cni_link }}"

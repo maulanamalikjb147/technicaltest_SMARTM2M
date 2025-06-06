@@ -1,0 +1,17 @@
+all:
+  children:
+    k8s_cluster:
+      children:
+        masters:
+          hosts:
+            ops-master:
+              ansible_host: 10.10.10.60
+              ansible_user: root
+        workers:
+          hosts:
+            ops-worker-1:
+              ansible_host: 10.10.10.61
+              ansible_user: root
+            ops-worker-2:
+              ansible_host: 10.10.10.62
+              ansible_user: root

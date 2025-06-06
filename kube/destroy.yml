@@ -1,0 +1,36 @@
+- name: Destroy Kubernetes Cluster
+  hosts: k8s_cluster 
+  become: yes
+  tasks:
+    - name: Unhold Kubernetes packages (if held)
+      command: apt-mark unhold kubelet kubeadm kubectl
+      ignore_errors: yes
+
+    - name: Reset Kubernetes on all nodes
+      command: kubeadm reset -f
+      ignore_errors: yes 
+
+    - name: Purge kubeadm, kubectl, kubelet on all nodes
+      apt:
+        name:
+          - kubelet
+          - kubeadm
+          - kubectl
+        state: absent
+        purge: yes
+        autoremove: yes
+
+    - name: Uninstall containerd on all nodes
+      apt:
+        name: containerd
+        state: absent
+        purge: yes
+        autoremove: yes
+
+- name: Remove Kubernetes config on master node
+  hosts: masters  
+  become: yes
+  tasks:
+    - name: Remove Kubernetes configuration directory
+      command: rm -rf "{{ ansible_env.HOME }}/.kube"
+      ignore_errors: yes
