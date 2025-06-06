@@ -122,8 +122,8 @@ Curl ip services
 ```
 curl 10.103.131.59
 ```
-
 Make sure the output its oke
+
 ![](/assets/tescurlsvc.png)
 
 
