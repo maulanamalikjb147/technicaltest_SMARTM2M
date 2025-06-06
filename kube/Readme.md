@@ -22,7 +22,7 @@ copy /.ssh/id.rsa.pub to all node
 cat ~/.ssh/id_rsa.pub
 ```
 
-![](/images/Screenshot_16.png)
+![](/assets/cat-ssh.png)
 
 insert id\_rsa.pub master to all worker node
 
