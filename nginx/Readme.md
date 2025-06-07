@@ -44,7 +44,7 @@ to check available version using this command
 
 ```
 apt-cache show nginx
-``
+```
 
 ## Install ansible
 
