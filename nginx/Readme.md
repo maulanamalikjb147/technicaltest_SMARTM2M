@@ -73,7 +73,7 @@ ansible --version
 ## Run ansible
 Run ansible at master node for boostrap cluster
 ```
-ansible-playbook -i inventory.yml playbooks.yml
+ansible-playbook playbooks.yml
 ```
 
 If ansible done , check nginx status
@@ -150,5 +150,5 @@ is it rule from loadbalancer
 ## Destroy cluster
 Run ansible destroy.yml to destroy cluster
 ```
-ansible-playbook -i inventory.yml destroy.yml
+ansible-playbook destroy.yml
 ```
