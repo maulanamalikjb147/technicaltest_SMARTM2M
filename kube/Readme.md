@@ -59,7 +59,7 @@ ansible --version
 ![](/assets/ansible-version.png)
 
 ## Run ansible
-Run ansible for boostrap cluster
+Run ansible at master node for boostrap cluster
 ```
 ansible-playbook -i inventory.yml playbooks.yml
 ```
