@@ -12,8 +12,8 @@
           -keyout {{ ssl_certificate_key }} \
           -out {{ ssl_certificate }} \
           -subj "/C=ID/ST=Jakarta/L=Jakarta/O=Localhost/CN=localhost"
-#      args:
-#        creates: /etc/nginx/ssl/selfsigned.crt
+      args:
+        creates: /etc/nginx/ssl/selfsigned.crt
 
 - name: install nginx
   hosts: nginx
