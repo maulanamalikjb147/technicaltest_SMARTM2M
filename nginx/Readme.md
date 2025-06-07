@@ -99,10 +99,12 @@ Welcome this from 10.10.10.62
 
 because :
 Welcome this from 10.10.10.60 > from 10.10.10.60
+
 Welcome this from 10.10.10.61 > from 10.10.10.61
+
 Welcome this from 10.10.10.62 > from 10.10.10.62
 
-is rule from loadbalancer
+is it rule from loadbalancer
 
 
 ## Destroy cluster
