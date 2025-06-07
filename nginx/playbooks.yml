@@ -1,15 +1,19 @@
 - name: create openssl
   hosts: nginx-main
   become: yes
+  vars_files:
+    - vars.yml   
   tasks:
     - name: create ssl self signed
       shell: |
         mkdir -p /etc/nginx/ssl && \
         openssl req -x509 -nodes -days 365 \
           -newkey rsa:2048 \
-          -keyout /etc/nginx/ssl/selfsigned.key \
-          -out /etc/nginx/ssl/selfsigned.crt \
+          -keyout {{ ssl_certificate_key }} \
+          -out {{ ssl_certificate }} \
           -subj "/C=ID/ST=Jakarta/L=Jakarta/O=Localhost/CN=localhost"
+#      args:
+#        creates: /etc/nginx/ssl/selfsigned.crt
 
 - name: install nginx
   hosts: nginx
@@ -20,14 +24,19 @@
         name: nginx
         state: present
 
-- name: Setup nginx.conf
+- name: Setup nginx.conf with upstream backend cluster
   hosts: nginx-main
   become: yes
+  vars_files:
+    - vars.yml  
   tasks:
-    - name: setup nginx.conf
-      copy:
-        src: ./nginx_selfsigned
+    - name: Generate nginx config from template
+      template:
+        src: templates/nginx_selfsigned.j2
         dest: /etc/nginx/sites-available/nginx_selfsigned
+        owner: root
+        group: root
+        mode: '0644'
 
     - name: create symlink nginx_selfsigned
       file:
