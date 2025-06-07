@@ -1,3 +1,4 @@
 endpoint_kube: "10.10.10.60"
 cni_link: "https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/calico.yaml"
 port_kube: "6443"
+kube_version: "1.29.15-1.1"

@@ -29,7 +29,7 @@
       apt:
         update_cache: yes
 
-    - name: Install containerd
+    - name: Install container runtime
       apt:
         name: containerd
         state: present
@@ -37,9 +37,9 @@
     - name: Install Kubernetes components
       apt:
         name:
-          - kubelet
-          - kubeadm
-          - kubectl
+          - kubelet={{ kube_version }}
+          - kubeadm={{ kube_version }}
+          - kubectl={{ kube_version }}
         state: present
 
     - name: Mark hold service kube
