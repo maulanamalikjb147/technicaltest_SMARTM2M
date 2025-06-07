@@ -1,11 +1,11 @@
 # Setup nginx with client server using ansible
 ## My environment
 
-| hostname | ip  | os  | nginx version | virtualization | note |
-| --- | --- | --- | --- | --- | --- |
-| ops-master | 10.10.10.60 | 20.04.6 LTS (Focal Fossa) | nginx version: nginx/1.18.0 (Ubuntu) | kvm | Loadbalancer & client servers |
-| ops-worker-1 | 10.10.10.61 | 20.04.6 LTS (Focal Fossa) | nginx version: nginx/1.18.0 (Ubuntu) | kvm | client servers |
-| ops-worker-2 | 10.10.10.62 | 20.04.6 LTS (Focal Fossa) | nginx version: nginx/1.18.0 (Ubuntu) | kvm | client servers |
+| hostname | ip  | os  | nginx version | ansible version | virtualization | note |
+| --- | --- | --- | --- | --- | --- | --- |
+| ops-master | 10.10.10.60 | 20.04.6 LTS (Focal Fossa) | nginx version: nginx/1.18.0 (Ubuntu) | 2.12.10 | kvm | Loadbalancer & client servers |
+| ops-worker-1 | 10.10.10.61 | 20.04.6 LTS (Focal Fossa) | nginx version: nginx/1.18.0 (Ubuntu) | \- | kvm | client servers |
+| ops-worker-2 | 10.10.10.62 | 20.04.6 LTS (Focal Fossa) | nginx version: nginx/1.18.0 (Ubuntu) | \- | kvm | client servers |
 
 ## Setup ssh
 
