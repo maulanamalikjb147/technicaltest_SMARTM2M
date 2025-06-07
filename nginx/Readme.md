@@ -74,6 +74,35 @@ systemctl status nginx
 
 > Make sure all nginx running
 
+## Check nginx
+make sure on all client hosts, there is an index.html file in /var/www/html/index.html, paint it and make sure the contents have an ip according to the host.
+
+```
+cat /var/www/html/index.html
+```
+
+![](/assets/catindexhtml.png)
+
+make sure in loadbalancer there is nginx_selfsigned file in /etc/nginx/sites-available /etc/nginx/sites-enabled
+
+```
+ls /etc/nginx/sites-available | grep nginx_selfsigned
+```
+```
+ls /etc/nginx/sites-enabled | grep nginx_selfsigned
+```
+
+![](/assets/checkfilenginx.png)
+
+make sure in loadbalancer , cert sucessfully generated at /etc/nginx/ssl
+
+```
+ls /etc/nginx/ssl
+```
+
+![](/assets/checkssl.png)
+
+
 ## Sanity nginx
 
 hit ip loadbalancer
