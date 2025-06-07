@@ -21,7 +21,7 @@
   tasks:
     - name: install nginx
       apt:
-        name: nginx
+        name: nginx={{ nginx_version }}
         state: present
 
 - name: Setup nginx.conf with upstream backend cluster

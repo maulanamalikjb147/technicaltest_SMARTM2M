@@ -35,6 +35,17 @@ nano ~/.ssh/authorized_keys
 
 after insert pubkey , test ssh to all worker node to user root , make sure the ssh passwordless
 
+## Setup ansible
+If you want custom version nginx, location ssl ,  and host client server. Setup at vars.yml
+
+![](/assets/nginx_vars.png)
+
+to check available version using this command
+
+```
+apt-cache show nginx
+``
+
 ## Install ansible
 
 Install ansible on master node

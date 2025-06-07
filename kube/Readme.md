@@ -63,6 +63,14 @@ If you want custom version kubernetes, enpoint_kube, portkube and cni . Setup at
 
 ![](/assets/vars.png)
 
+to check available version using this command
+
+```
+apt-cache policy kubelet
+apt-cache policy kubeadm
+apt-cache policy kubectl
+```
+
 ## Run ansible
 Run ansible at master node for boostrap cluster
 ```

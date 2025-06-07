@@ -1,3 +1,6 @@
 client_server_1: "10.10.10.60"
 client_server_2: "10.10.10.61"
 client_server_3: "10.10.10.62"
+ssl_certificate: "/etc/nginx/ssl/selfsigned.crt"
+ssl_certificate_key: "/etc/nginx/ssl/selfsigned.key"
+nginx_version: "1.18.0-0ubuntu1.7"
