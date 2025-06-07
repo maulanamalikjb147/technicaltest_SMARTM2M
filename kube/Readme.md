@@ -58,6 +58,11 @@ ansible --version
 
 ![](/assets/ansible-version.png)
 
+## Setup ansible
+If you want custom version kubernetes, enpoint_kube, portkube and cni . Setup at vars.yml
+
+![](/assets/vars.png)
+
 ## Run ansible
 Run ansible at master node for boostrap cluster
 ```
